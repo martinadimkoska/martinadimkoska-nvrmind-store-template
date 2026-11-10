@@ -848,4 +848,104 @@ a:hover { color: inherit; text-decoration: none; }
    -------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
   .ticker__track { animation: none; }
+
+  .js [data-reveal] { opacity: 1; transform: none; transition: none; }
+  .media-fill,
+  .banner__img,
+  .gallery__item,
+  .btn { transition: none; }
+}
+
+
+/* 7. Images
+   -------------------------------------------------------------------------- */
+.banner__img { z-index: 0; transition: transform .8s cubic-bezier(.2, .7, .2, 1); }
+
+/* Text on top of a banner photo stays readable. */
+.banner:has(.banner__img) .banner__body { color: var(--nvr-paper); }
+.banner:has(.banner__img) .banner__arrow { border-color: var(--nvr-paper); }
+.banner:has(.banner__img)::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(var(--nvr-ink-rgb), .6), transparent 55%);
+}
+
+
+/* 8. Scroll reveal
+   Elements with [data-reveal] fade up once they enter the viewport (main.js adds
+   .is-visible). Children of [data-reveal-stagger] reveal one after another.
+   Everything is visible by default, and only hidden when JS is running.
+   -------------------------------------------------------------------------- */
+.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(1.5rem);
+  transition:
+    opacity .7s cubic-bezier(.2, .7, .2, 1) var(--reveal-delay, 0s),
+    transform .7s cubic-bezier(.2, .7, .2, 1) var(--reveal-delay, 0s);
+}
+
+.js [data-reveal].is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+
+/* 9. Hover effects (only on devices that can hover)
+   -------------------------------------------------------------------------- */
+.media-fill { transition: transform .7s cubic-bezier(.2, .7, .2, 1), opacity .45s ease; }
+.media-fill--hover { opacity: 0; }
+
+.product-card,
+.review-card { transition: background-color .25s ease; }
+
+.text-link,
+.btn { transition: color .2s ease, background-color .2s ease, border-color .2s ease, transform .2s ease; }
+
+@media (hover: hover) {
+  /* Product: swap to the second photo, slow zoom, highlight the card. */
+  .product-card:hover { background: var(--nvr-surface); }
+  .product-card:hover .media-fill { transform: scale(1.05); }
+  .product-card:hover .media-fill--hover { opacity: 1; }
+  .product-card:hover .product-card__title a { text-decoration: underline; text-underline-offset: .2em; }
+
+  .review-card:hover { background: var(--nvr-surface); }
+
+  /* Banner: zoom the photo, straighten the tag, nudge the arrow. */
+  .banner:hover .banner__img { transform: scale(1.06); }
+  .banner__tag { transition: transform .3s ease; }
+  .banner:hover .banner__tag { transform: rotate(0); }
+  .banner__arrow .icon { transition: transform .25s ease; }
+  .banner:hover .banner__arrow .icon { transform: translateX(3px); }
+
+  /* Gallery: straighten the polaroid and lift it. */
+  .gallery__item { transition: transform .35s cubic-bezier(.2, .7, .2, 1); }
+  .gallery__item:hover { transform: rotate(0) scale(1.03); z-index: 2; }
+  .gallery__item:hover .media-fill { transform: scale(1.06); }
+
+  /* Buttons and links. */
+  .btn-paper:hover,
+  .btn-outline-paper:hover { transform: translateY(-2px); }
+  .btn-text .icon { transition: transform .2s ease; }
+  .btn-text:hover .icon { transform: translateX(3px); }
+
+  /* Nav: underline that draws in from the left. */
+  .navbar-nav .nav-link { position: relative; }
+  .navbar-nav .nav-link::after {
+    content: "";
+    position: absolute;
+    left: .875rem;
+    right: .875rem;
+    bottom: .6rem;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform .3s ease;
+  }
+  .navbar-nav .nav-link:hover::after { transform: scaleX(1); }
+}
+
+@media (hover: hover) and (max-width: 767.98px) {
+  .navbar-nav .nav-link::after { display: none; }
 }

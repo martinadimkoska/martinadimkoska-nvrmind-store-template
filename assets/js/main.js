@@ -2,11 +2,45 @@
  * nvrmind template — page behaviour.
  *
  * Bootstrap's bundle already drives the navbar collapse and the FAQ accordion.
- * This file only adds what Bootstrap does not: the Skopje clock, the footer
- * year and the newsletter form.
+ * This file only adds what Bootstrap does not: scroll reveal, the Skopje clock,
+ * the footer year and the newsletter form.
  */
 (() => {
   'use strict';
+
+  /**
+   * Fades elements in as they scroll into view.
+   *   [data-reveal]          reveals itself (optional style="--reveal-delay: .15s")
+   *   [data-reveal-stagger]  reveals each direct child, one after another
+   */
+  const initReveal = () => {
+    document.querySelectorAll('[data-reveal-stagger]').forEach((group) => {
+      [...group.children].forEach((child, index) => {
+        child.setAttribute('data-reveal', '');
+        child.style.setProperty('--reveal-delay', `${index * 0.09}s`);
+      });
+    });
+
+    const items = document.querySelectorAll('[data-reveal]');
+
+    if (!('IntersectionObserver' in window)) {
+      items.forEach((item) => item.classList.add('is-visible'));
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        });
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -5% 0px' }
+    );
+
+    items.forEach((item) => observer.observe(item));
+  };
 
   const initClock = () => {
     const clock = document.querySelector('[data-clock]');
@@ -54,6 +88,7 @@
     });
   };
 
+  initReveal();
   initClock();
   initYear();
   initNewsletter();
